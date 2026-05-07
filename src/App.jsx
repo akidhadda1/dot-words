@@ -117,8 +117,8 @@ const THEMES = {
 };
 
 // ---- Constants ----
-const REVEAL_SPARSE = 0.035;
-const REVEAL_DENSE = 0.6;
+const REVEAL = [0.025, 0.045, 0.07, 0.11, 0.18, 0.28, 0.45];
+const MAX_HINTS = REVEAL.length - 1;
 const BASE = 1000, HINT_PEN = 150, WRONG_PEN = 100, FLOOR = 100, PER_GAME = 10;
 const CW = 680, CH = 200, CELL = 7;
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -129,43 +129,21 @@ function dailySeed() { const d = new Date(); return d.getFullYear() * 10000 + (d
 function shuffle(arr, r) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function dailyWords(key) { return shuffle(THEMES[key], rng(dailySeed() + key.charCodeAt(0) * 100)).slice(0, PER_GAME); }
 
-// ---- Edge detection per letter ----
-function findEdgesPerLetter(word, w, h) {
+// ---- Edge detection ----
+function findEdges(word, w, h) {
   const c = document.createElement("canvas"); c.width = w; c.height = h;
   const ctx = c.getContext("2d");
   let fs = 150;
   ctx.font = `900 ${fs}px Arial, Helvetica, sans-serif`;
   while (ctx.measureText(word).width > w * 0.88 && fs > 24) { fs -= 2; ctx.font = `900 ${fs}px Arial, Helvetica, sans-serif`; }
-
-  // Letter boundaries via prefix measurement
-  const totalW = ctx.measureText(word).width;
-  const startX = (w - totalW) / 2;
-  const bounds = [];
-  for (let i = 0; i < word.length; i++) {
-    bounds.push({
-      left: startX + ctx.measureText(word.slice(0, i)).width,
-      right: startX + ctx.measureText(word.slice(0, i + 1)).width,
-    });
-  }
-
-  // Draw and detect edges
   ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   ctx.fillText(word, w / 2, h / 2);
   const img = ctx.getImageData(0, 0, w, h).data;
   const on = (x, y) => x >= 0 && x < w && y >= 0 && y < h && img[(y * w + x) * 4 + 3] > 128;
-
-  const perLetter = Array.from({ length: word.length }, () => []);
-  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-    if (on(x, y) && (!on(x-1,y) || !on(x+1,y) || !on(x,y-1) || !on(x,y+1))) {
-      let best = 0;
-      for (let i = 0; i < bounds.length; i++) {
-        if (x >= bounds[i].left && x < bounds[i].right) { best = i; break; }
-        if (i === bounds.length - 1) best = i;
-      }
-      perLetter[best].push([x, y]);
-    }
-  }
-  return perLetter;
+  const edges = [];
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++)
+    if (on(x, y) && (!on(x-1,y) || !on(x+1,y) || !on(x,y-1) || !on(x,y+1))) edges.push([x, y]);
+  return edges;
 }
 
 // ---- Grid-based even distribution ----
@@ -187,22 +165,12 @@ function distribute(rawEdges, seed) {
 }
 
 // ---- Drawing ----
-function drawGame(canvas, letterEdges, revealedSet, showFull) {
+function drawDots(canvas, dots) {
   const ctx = canvas.getContext("2d"); ctx.clearRect(0, 0, CW, CH);
   ctx.shadowColor = "rgba(255,248,220,0.5)"; ctx.shadowBlur = 5; ctx.fillStyle = "#FFF5D6";
-  for (let i = 0; i < letterEdges.length; i++) {
-    const edges = letterEdges[i];
-    if (!edges.length) continue;
-    const frac = showFull ? 1.0 : (revealedSet.has(i) ? REVEAL_DENSE : REVEAL_SPARSE);
-    const count = Math.ceil(edges.length * frac);
-    for (let j = 0; j < count; j++) {
-      ctx.beginPath(); ctx.arc(edges[j][0], edges[j][1], 2.2, 0, Math.PI * 2); ctx.fill();
-    }
-  }
+  for (const [x, y] of dots) { ctx.beginPath(); ctx.arc(x, y, 2.2, 0, Math.PI * 2); ctx.fill(); }
   ctx.shadowBlur = 0;
 }
-
-// Storage: uses Firestore (shared) + localStorage (personal)
 
 // ---- Styles ----
 const ST = {
@@ -232,9 +200,7 @@ export default function DotWordGame() {
   const [theme, setTheme] = useState(null);
   const [words, setWords] = useState([]);
   const [wi, setWi] = useState(0);
-  const [revealCount, setRevealCount] = useState(0);
-  const [revealOrder, setRevealOrder] = useState([]);
-  const [letterEdges, setLetterEdges] = useState([]);
+  const [hints, setHints] = useState(0);
   const [wrongs, setWrongs] = useState(0);
   const [guess, setGuess] = useState("");
   const [scores, setScores] = useState([]);
@@ -242,6 +208,7 @@ export default function DotWordGame() {
   const [solved, setSolved] = useState(false);
   const [skipped, setSkipped] = useState(false);
   const [showFull, setShowFull] = useState(false);
+  const [edges, setEdges] = useState([]);
   const [pName, setPName] = useState("");
   const [lb, setLb] = useState([]);
   const [played, setPlayed] = useState({});
@@ -249,10 +216,8 @@ export default function DotWordGame() {
   const inRef = useRef(null);
 
   const word = words[wi] || "";
-  const maxHints = Math.max(1, Math.min(5, word.length - 2));
   const total = scores.reduce((a, b) => a + b, 0);
-  const potential = Math.max(FLOOR, BASE - revealCount * HINT_PEN - wrongs * WRONG_PEN);
-  const revealedSet = new Set(revealOrder.slice(0, revealCount));
+  const potential = Math.max(FLOOR, BASE - hints * HINT_PEN - wrongs * WRONG_PEN);
 
   // Check played themes on mount
   useEffect(() => {
@@ -266,32 +231,28 @@ export default function DotWordGame() {
     })();
   }, []);
 
-  // Compute edges per letter when word changes
+  // Compute edges when word changes
   useEffect(() => {
     if (!word || phase !== "playing") return;
     const seed = dailySeed() + wi * 777 + word.charCodeAt(0);
-    const raw = findEdgesPerLetter(word, CW, CH);
-    const dist = raw.map((edges, i) => distribute(edges, seed + i * 31));
-    setLetterEdges(dist);
-    // Shuffle letter indices for reveal order
-    const order = shuffle(Array.from({ length: word.length }, (_, i) => i), rng(seed + 999));
-    setRevealOrder(order);
-    setRevealCount(0); setWrongs(0); setGuess(""); setFb(null); setSolved(false); setSkipped(false); setShowFull(false);
+    setEdges(distribute(findEdges(word, CW, CH), seed));
+    setHints(0); setWrongs(0); setGuess(""); setFb(null); setSolved(false); setSkipped(false); setShowFull(false);
   }, [word, phase]);
 
-  // Draw
+  // Draw dots
   useEffect(() => {
     const cv = cvRef.current;
-    if (!cv || !letterEdges.length) return;
-    drawGame(cv, letterEdges, showFull ? new Set(Array.from({ length: word.length }, (_, i) => i)) : revealedSet, showFull);
-  }, [letterEdges, revealCount, showFull]);
+    if (!cv || !edges.length) return;
+    const frac = showFull ? 1 : REVEAL[Math.min(hints, REVEAL.length - 1)];
+    drawDots(cv, edges.slice(0, Math.ceil(edges.length * frac)));
+  }, [edges, hints, showFull]);
 
   // Focus input
   useEffect(() => {
     if (phase === "playing" && !solved && !skipped) setTimeout(() => inRef.current?.focus(), 50);
   }, [phase, solved, skipped, wi]);
 
-  // Storage: uses Firestore (shared) + localStorage (personal)
+  // ---- Storage ----
   async function loadLb(t) {
     const raw = await sGet(`lb:${todayStr()}:${t}`, true);
     setLb(raw ? JSON.parse(raw) : []);
@@ -318,15 +279,13 @@ export default function DotWordGame() {
   function doGuess() {
     if (!guess.trim()) return;
     if (guess.trim().toUpperCase() === word) {
-      const sc = Math.max(FLOOR, BASE - revealCount * HINT_PEN - wrongs * WRONG_PEN);
+      const sc = Math.max(FLOOR, BASE - hints * HINT_PEN - wrongs * WRONG_PEN);
       setScores(p => [...p, sc]); setSolved(true); setShowFull(true); setFb({ ok: true, sc }); setGuess(""); sfxCorrect();
     } else {
       setWrongs(p => p + 1); setFb({ ok: false, t: guess.trim().toUpperCase() }); setGuess(""); sfxWrong();
     }
   }
-  function doHint() {
-    if (revealCount < maxHints) { setRevealCount(p => p + 1); setFb(null); sfxHint(); }
-  }
+  function doHint() { if (hints < MAX_HINTS) { setHints(p => p + 1); setFb(null); sfxHint(); } }
   function doSkip() { setSkipped(true); setShowFull(true); setScores(p => [...p, 0]); setFb({ ok: false, skip: true }); }
   function next() { wi + 1 >= PER_GAME ? setPhase("over") : setWi(p => p + 1); }
   async function submit() {
@@ -341,7 +300,7 @@ export default function DotWordGame() {
     <div style={{ ...ST.page, ...ST.center }}>
       <div style={ST.sub}>Daily Challenge</div>
       <h1 style={ST.h1}>DOT WORDS</h1>
-      <p style={ST.muted}>Guess the word from its dot outline. Each hint reveals one letter, but costs you points.</p>
+      <p style={ST.muted}>Guess the word from its dot outline. Use hints to reveal more dots, but each one costs you points.</p>
       <div style={ST.grid}>
         {Object.keys(THEMES).map(t => {
           const done = played[t];
@@ -373,22 +332,18 @@ export default function DotWordGame() {
         <canvas ref={cvRef} width={CW} height={CH} style={ST.canvas} />
       </div>
 
-      {/* Letter blanks with revealed letters shown */}
       <div style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 3 }}>
-        {word.split("").map((ch, i) => {
-          const show = revealedSet.has(i) || solved || skipped;
-          return (
-            <span key={i} style={{
-              display: "inline-flex", alignItems: "center", justifyContent: "center",
-              width: 20, height: 28,
-              borderBottom: show ? "2px solid #FBBF24" : "2px solid #2A3A4E",
-              color: show ? "#FBBF24" : "transparent",
-              fontWeight: 700, fontSize: 15, letterSpacing: 0,
-            }}>
-              {show ? ch : "\u00A0"}
-            </span>
-          );
-        })}
+        {word.split("").map((ch, i) => (
+          <span key={i} style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 20, height: 28,
+            borderBottom: (solved || skipped) ? "2px solid #FBBF24" : "2px solid #2A3A4E",
+            color: (solved || skipped) ? "#FBBF24" : "transparent",
+            fontWeight: 700, fontSize: 15,
+          }}>
+            {(solved || skipped) ? ch : "\u00A0"}
+          </span>
+        ))}
         <span style={{ marginLeft: 8, fontSize: 12, color: "#556677" }}>({word.length})</span>
       </div>
 
@@ -396,8 +351,8 @@ export default function DotWordGame() {
         <div style={ST.row}>
           <input ref={inRef} value={guess} onChange={e => setGuess(e.target.value)} onKeyDown={e => e.key === "Enter" && doGuess()} placeholder="Type your guess..." style={ST.input} />
           <button onClick={doGuess} style={ST.btnBlue}>Guess</button>
-          <button onClick={doHint} disabled={revealCount >= maxHints} style={ST.btnHint(revealCount < maxHints)}>
-            Hint&nbsp;({maxHints - revealCount})
+          <button onClick={doHint} disabled={hints >= MAX_HINTS} style={ST.btnHint(hints < MAX_HINTS)}>
+            Hint&nbsp;({MAX_HINTS - hints})
           </button>
           <button onClick={doSkip} style={ST.btnSkip}>Skip</button>
         </div>
@@ -415,8 +370,8 @@ export default function DotWordGame() {
       )}
 
       <div style={{ display: "flex", gap: 5, marginTop: 14 }}>
-        {Array.from({ length: maxHints }).map((_, i) => (
-          <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: i < revealCount ? "#FBBF24" : "#162032", border: "1px solid #243248" }} />
+        {Array.from({ length: MAX_HINTS }).map((_, i) => (
+          <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: i < hints ? "#FBBF24" : "#162032", border: "1px solid #243248" }} />
         ))}
       </div>
     </div>

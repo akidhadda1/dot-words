@@ -29,6 +29,10 @@ const WIKI = {
   "THE GREAT GATSBY":"The_Great_Gatsby","THE HOBBIT":"The_Hobbit","THE ODYSSEY":"Odyssey","WUTHERING HEIGHTS":"Wuthering_Heights","PRIDE AND PREJUDICE":"Pride_and_Prejudice","GREAT EXPECTATIONS":"Great_Expectations","THE GRAPES OF WRATH":"The_Grapes_of_Wrath","THE ALCHEMIST":"The_Alchemist_(novel)","THE JUNGLE BOOK":"The_Jungle_Book","THE GOLDFINCH":"The_Goldfinch_(novel)","THE SHINING":"The_Shining_(novel)","THE OUTSIDERS":"The_Outsiders_(novel)","THE SCARLET LETTER":"The_Scarlet_Letter","FAHRENHEIT 451":"Fahrenheit_451","CHARLOTTES WEB":"Charlotte%27s_Web","ALICE IN WONDERLAND":"Alice%27s_Adventures_in_Wonderland","A CLOCKWORK ORANGE":"A_Clockwork_Orange_(novel)","LORD OF THE FLIES":"Lord_of_the_Flies","ANIMAL FARM":"Animal_Farm","THE HANDMAIDS TALE":"The_Handmaid%27s_Tale","SHERLOCK HOLMES":"Sherlock_Holmes","HUCKLEBERRY FINN":"Adventures_of_Huckleberry_Finn","THE HUNGER GAMES":"The_Hunger_Games","JURASSIC PARK":"Jurassic_Park","THE ILIAD":"Iliad","THE PHANTOM OF OPERA":"The_Phantom_of_the_Opera","DIVERGENT":"Divergent_(novel)","SAPIENS":"Sapiens:_A_Brief_History_of_Humankind","OUTLIERS":"Outliers_(book)","FOUNDATION":"Foundation_(Asimov_novel)","SHOGUN":"Sh%C5%8Dgun_(novel)","ROOTS":"Roots:_The_Saga_of_an_American_Family","STARDUST":"Stardust_(novel)","HATCHET":"Hatchet_(novel)","DUNE":"Dune_(novel)","ERAGON":"Eragon","CARRIE":"Carrie_(novel)","MISERY":"Misery_(novel)","HOLES":"Holes_(novel)","CORALINE":"Coraline","MATILDA":"Matilda_(novel)","REBECCA":"Rebecca_(novel)","EDUCATED":"Educated_(book)","UNBROKEN":"Unbroken_(book)","PACHINKO":"Pachinko_(novel)","PINOCCHIO":"The_Adventures_of_Pinocchio","INKHEART":"Inkheart",
   LINCOLN:"Abraham_Lincoln",EINSTEIN:"Albert_Einstein",GANDHI:"Mahatma_Gandhi",WASHINGTON:"George_Washington",COLUMBUS:"Christopher_Columbus",SHAKESPEARE:"William_Shakespeare",BEETHOVEN:"Ludwig_van_Beethoven",DARWIN:"Charles_Darwin",NEWTON:"Isaac_Newton",CAESAR:"Julius_Caesar",CHURCHILL:"Winston_Churchill",ROOSEVELT:"Franklin_D._Roosevelt",JEFFERSON:"Thomas_Jefferson",FRANKLIN:"Benjamin_Franklin",HAMILTON:"Alexander_Hamilton",TESLA:"Nikola_Tesla",EDISON:"Thomas_Edison",CURIE:"Marie_Curie",MANDELA:"Nelson_Mandela",GALILEO:"Galileo_Galilei",PICASSO:"Pablo_Picasso",MOZART:"Wolfgang_Amadeus_Mozart",GUTENBERG:"Johannes_Gutenberg",HANNIBAL:"Hannibal_Barca",MACHIAVELLI:"Niccol%C3%B2_Machiavelli",NIGHTINGALE:"Florence_Nightingale",TUBMAN:"Harriet_Tubman",DOUGLASS:"Frederick_Douglass",ARMSTRONG:"Neil_Armstrong",TURING:"Alan_Turing",HEMINGWAY:"Ernest_Hemingway",TWAIN:"Mark_Twain",DICKENS:"Charles_Dickens",AUSTEN:"Jane_Austen",ORWELL:"George_Orwell",DANTE:"Dante_Alighieri",POE:"Edgar_Allan_Poe",ROCKEFELLER:"John_D._Rockefeller",CARNEGIE:"Andrew_Carnegie",FREUD:"Sigmund_Freud",MARX:"Karl_Marx",HAWKING:"Stephen_Hawking",PASTEUR:"Louis_Pasteur",EARHART:"Amelia_Earhart",REVERE:"Paul_Revere",EISENHOWER:"Dwight_D._Eisenhower",KENNEDY:"John_F._Kennedy",COPERNICUS:"Nicolaus_Copernicus",MAGELLAN:"Ferdinand_Magellan",BACH:"Johann_Sebastian_Bach",ALEXANDER:"Alexander_the_Great",ATTILA:"Attila_the_Hun",LUTHER:"Martin_Luther",ROUSSEAU:"Jean-Jacques_Rousseau",DESCARTES:"Ren%C3%A9_Descartes",TOLSTOY:"Leo_Tolstoy",HUGO:"Victor_Hugo",THOREAU:"Henry_David_Thoreau",EMERSON:"Ralph_Waldo_Emerson",DISNEY:"Walt_Disney",FORD:"Henry_Ford",PATTON:"George_S._Patton",HOUDINI:"Harry_Houdini",
   GHOSTBUSTERS:"Ghostbusters",HALLOWEEN:"Halloween_(1978_film)",
+  "Movies:KONG":"King_Kong","Movies:ELF":"Elf_(film)","Movies:SPLIT":"Split_(2016_American_film)","Movies:SPECTRE":"Spectre_(2015_film)","Movies:BOLT":"Bolt_(2008_film)","Movies:CARS":"Cars_(film)","Movies:SOUL":"Soul_(2020_film)","Movies:BRAVE":"Brave_(2012_film)","Movies:MASK":"The_Mask_(1994_film)","Movies:SALT":"Salt_(2010_film)","Movies:WANTED":"Wanted_(2008_film)","Movies:SPEED":"Speed_(1994_film)","Movies:GHOST":"Ghost_(1990_film)","Movies:NOPE":"Nope_(film)","Movies:ARRIVAL":"Arrival_(film)","Movies:SPOTLIGHT":"Spotlight_(film)","Movies:BLADE":"Blade_(1998_film)","Movies:CREED":"Creed_(film)","Movies:NEMO":"Finding_Nemo","Movies:WHIPLASH":"Whiplash_(2014_film)","Movies:CARRIE":"Carrie_(1976_film)","Movies:DUNE":"Dune_(2021_film)","Movies:HOLES":"Holes_(2003_film)","Movies:MISERY":"Misery_(film)","Movies:MATILDA":"Matilda_(1996_film)","Movies:CORALINE":"Coraline_(film)","Movies:COCO":"Coco_(2017_film)","Movies:FROZEN":"Frozen_(2013_film)","Movies:ENCHANTED":"Enchanted_(film)","Movies:CRUELLA":"Cruella_(film)","Movies:LUCA":"Luca_(2021_film)","Movies:LUCY":"Lucy_(2014_film)","Movies:HULK":"Hulk_(film)","Movies:GRAVITY":"Gravity_(2013_film)","Movies:ROBOCOP":"RoboCop_(1987_film)","Movies:LINCOLN":"Lincoln_(film)","Movies:NAPOLEON":"Napoleon_(2023_film)","Movies:GANDHI":"Gandhi_(film)","Movies:TROY":"Troy_(film)","Movies:CRASH":"Crash_(2004_film)","Movies:SMILE":"Smile_(2022_film)","Movies:SIGNS":"Signs_(film)","Movies:WONDER":"Wonder_(film)","Movies:MEMENTO":"Memento_(film)","Movies:SULLY":"Sully_(film)","Movies:HANCOCK":"Hancock_(film)","Movies:FARGO":"Fargo_(1996_film)","Movies:JUNO":"Juno_(film)",
+  "Books:CARRIE":"Carrie_(novel)","Books:HOLES":"Holes_(novel)","Books:MATILDA":"Matilda_(novel)","Books:MISERY":"Misery_(novel)","Books:DUNE":"Dune_(novel)","Books:CORALINE":"Coraline","Books:INFERNO":"Inferno_(Dante)","Books:GULLIVER":"Gulliver%27s_Travels","Books:CIRCE":"Circe_(novel)","Books:EMMA":"Emma_(novel)","Books:PERSUASION":"Persuasion_(novel)","Books:ATONEMENT":"Atonement_(novel)","Books:ULYSSES":"Ulysses_(novel)","Books:BELOVED":"Beloved_(novel)","Books:GOOSEBUMPS":"Goosebumps","Books:DIVERGENT":"Divergent_(novel)","Books:LOLITA":"Lolita","Books:ROOTS":"Roots:_The_Saga_of_an_American_Family","Books:FOUNDATION":"Foundation_(Asimov_novel)",
+  "Countries:CONGO":"Republic_of_the_Congo","Countries:GEORGIA":"Georgia_(country)","Countries:TURKEY":"Turkey","Countries:MICRONESIA":"Federated_States_of_Micronesia","Countries:CHAD":"Chad","Countries:NIGER":"Niger","Countries:DOMINICA":"Dominica",
+  "Foods:MASALA":"Masala","Foods:AGLIO":"Aglio_e_olio","Foods:TARTARE":"Steak_tartare",
 };
 
 const REVEAL = [0.025, 0.045, 0.07, 0.11, 0.18, 0.28, 0.45];
@@ -70,17 +74,24 @@ function drawDots(canvas, dots) {
   ctx.shadowBlur = 0;
 }
 
-async function fetchWikiInfo(gameWord) {
-  let article = WIKI[gameWord];
+async function fetchWikiInfo(gameWord, theme) {
+  let article = WIKI[`${theme}:${gameWord}`] || WIKI[gameWord];
   if (!article) article = gameWord.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join("_");
-  try {
-    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(article)}`);
-    if (!res.ok) return null;
-    const data = await res.json();
-    const raw = data.extract || "";
-    const sentences = raw.split(". ").slice(0, 2).join(". ");
-    return { title: data.title || gameWord, desc: sentences ? (sentences.endsWith(".") ? sentences : sentences + ".") : null, img: data.thumbnail?.source || null };
-  } catch { return null; }
+  const suffixes = { Movies: "_(film)", Books: "_(novel)", Foods: "_(food)" };
+  const tries = [article];
+  if (suffixes[theme]) tries.push(article + suffixes[theme]);
+  for (const t of tries) {
+    try {
+      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`);
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (data.type === "disambiguation") continue;
+      const raw = data.extract || "";
+      const sentences = raw.split(". ").slice(0, 2).join(". ");
+      return { title: data.title || gameWord, desc: sentences ? (sentences.endsWith(".") ? sentences : sentences + ".") : null, img: data.thumbnail?.source || null };
+    } catch { continue; }
+  }
+  return null;
 }
 
 const ST = {
@@ -154,7 +165,7 @@ export default function DotWordGame() {
     if (g === word) {
       const sc = Math.max(FLOOR, BASE - hints * HINT_PEN - wrongPen);
       setScores(p => [...p, sc]); setSolved(true); setShowFull(true); setFb({ ok: true, sc }); setGuess(""); sfxCorrect();
-      fetchWikiInfo(word).then(info => { if (info) setWikiInfo(info); });
+      fetchWikiInfo(word, theme).then(info => { if (info) setWikiInfo(info); });
     } else {
       // Reveal correct-position letters
       const newRevealed = new Set(revealed);
@@ -170,7 +181,7 @@ export default function DotWordGame() {
   }
 
   function doHint() { if (hints < MAX_HINTS) { setHints(p => p + 1); setFb(null); sfxHint(); } }
-  function doSkip() { setSkipped(true); setShowFull(true); setScores(p => [...p, 0]); setFb({ ok: false, skip: true }); fetchWikiInfo(word).then(info => { if (info) setWikiInfo(info); }); }
+  function doSkip() { setSkipped(true); setShowFull(true); setScores(p => [...p, 0]); setFb({ ok: false, skip: true }); fetchWikiInfo(word, theme).then(info => { if (info) setWikiInfo(info); }); }
   function next() { wi + 1 >= PER_GAME ? setPhase("over") : setWi(p => p + 1); }
   async function submit() { if (!pName.trim()) return; await saveLb(pName.trim(), total, theme); await markPlayed(theme, total); setPhase("lb"); }
   async function skipSubmit() { await markPlayed(theme, total); setPhase("menu"); }
